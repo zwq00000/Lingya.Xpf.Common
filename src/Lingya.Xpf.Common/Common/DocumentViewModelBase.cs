@@ -1,24 +1,42 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Autofac;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
-using Lingya.Xpf.Annotations;
+using DevExpress.Utils.Design;
+using JetBrains.Annotations;
+using Lingya.Xpf.Core;
+using Lingya.Xpf.Extensions;
+using Lingya.Xpf.Services;
 
 namespace Lingya.Xpf.Common {
     /// <summary>
     /// 文档内容 ViewmModel 基础
     /// </summary>
     [POCOViewModel]
-    public abstract class DocumentViewModelBase : IDocumentContent, INotifyPropertyChanged {
+    public abstract class DocumentViewModelBase :  IDocumentContent,ISupportParameter, INotifyPropertyChanged ,ILoadingProvider{
         private bool _isLoading;
         private bool _hasChanges;
         private object _title;
+        private bool _isInitialized = false;
 
-        #region Properties
+        protected DocumentViewModelBase() {
+            if (!ViewModelBase.IsInDesignMode) {
+                Scope = this.BeginLifetimeScope();
+            }
+        }
 
+        protected DocumentViewModelBase(ILifetimeScope scope) {
+              this.Scope = scope;
+        }
+
+        #region Service
         protected IMessageBoxService MessageBoxService {
             get {
                 return this.GetRequiredService<IMessageBoxService>();
@@ -31,11 +49,11 @@ namespace Lingya.Xpf.Common {
             }
         }
 
-        protected IDocumentManagerService WindowedDocumentManagerService {
-            get {
-                return this.GetService<IDocumentManagerService>("WindowedDocumentUIService");
-            }
-        }
+       
+
+        #endregion
+
+        #region Properties
 
         public bool IsLoading {
             get { return _isLoading; }
@@ -46,7 +64,10 @@ namespace Lingya.Xpf.Common {
             }
         }
 
-        public bool HasChanges {
+        /// <summary>
+        /// 数据是否改变
+        /// </summary>
+        public virtual bool HasChanges {
             get { return _hasChanges; }
             set {
                 if (value == _hasChanges) return;
@@ -59,30 +80,51 @@ namespace Lingya.Xpf.Common {
         #endregion
 
         /// <summary>
-        /// 初始化数据源
+        /// 异步加载数据
         /// </summary>
         /// <returns></returns>
-        protected abstract Task LoadCoreAsync();
+        protected abstract Task LoadDataCore();
 
-        [AsyncCommand]
-        public async void OnInitialized() {
-            IsLoading = true;
-            try {
-                await LoadCoreAsync();
-            } finally {
-                IsLoading = false;
+        #region Commands
+
+        /// <summary>
+        /// 在 初始化之前，处理视图模型参数，
+        /// 此方法在加载数据 <see cref="LoadDataCore"/> 之前
+        /// <see cref="ISupportParameter.Parameter"/>
+        /// </summary>
+        protected virtual async Task ProcessParameter() {
+            await Task.Yield();
+        }
+
+        /// <summary>
+        /// 当初始化完成时,响应此方法，自动加载数据
+        /// </summary>
+        /// <returns></returns>
+        protected async Task OnInitialized() {
+            using (this.BeginLoadingScope()) {
+                if (Parameter != null) {
+                    await ProcessParameter();
+                }
+                await LoadDataCore();
             }
         }
 
-        [Command]
-        public virtual void OnLoaded() {
-            Debug.WriteLine($"{GetType().Name}.Onloaded");
+        [AsyncCommand]
+        public virtual async  Task OnLoaded() {
+            if (!_isInitialized) {
+                //第一次加载执行初始化事件
+                await OnInitialized();
+                _isInitialized = true;
+            }
         }
 
         [Command]
         public virtual void OnUnloaded() {
             Debug.WriteLine($"{GetType().Name}.OnUnloaded");
         }
+
+        #endregion Commands
+
 
         #region Implements INotifyPropertyChanged
 
@@ -115,6 +157,8 @@ namespace Lingya.Xpf.Common {
         /// <para>Invoked after a document has been closed (hidden). </para>
         /// </summary>
         public virtual void OnDestroy() {
+            Scope?.Dispose();
+            GC.Collect();
         }
 
         /// <summary>
@@ -146,6 +190,19 @@ namespace Lingya.Xpf.Common {
                 OnPropertyChanged();
             }
         }
+
+        protected ILifetimeScope Scope { get; }
+
+        #endregion
+
+        #region Implementation of ISupportParameter
+
+        /// <summary>
+        ///                 <para>Specifies a parameter for passing data between view models.
+        /// </para>
+        ///             </summary>
+        /// <value>A parameter to be passed.</value>
+        public object Parameter { get; set; }
 
         #endregion
     }

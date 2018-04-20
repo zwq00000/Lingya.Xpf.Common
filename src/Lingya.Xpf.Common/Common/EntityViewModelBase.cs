@@ -1,33 +1,10 @@
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.DataAnnotations;
 using RedRiver.Data.Repos;
 
 namespace Lingya.Xpf.Common {
-
-    public abstract class EntitiesCollectionViewModelBase<TEntity>: DocumentViewModelBase where TEntity : class {
-        
-        private ICollection<TEntity> _entities;
-
-        public virtual ICollection<TEntity> Entities {
-            get { return _entities; }
-            protected set {
-                if (Equals(value, _entities)) return;
-                _entities = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        [AsyncCommand(Name = "RefreshCommand")]
-        public async Task Refresh() {
-            await LoadCoreAsync();
-        }
-    }
-
     public abstract class EntityViewModelBase<TEntity>: ViewModelBase, IDocumentContent where TEntity : class{
 
 
@@ -63,7 +40,9 @@ namespace Lingya.Xpf.Common {
 
         /// <inheritdoc />
         public void OnDestroy() {
-            
+            if(this.Repository is IDisposable disposable){
+                disposable.Dispose();
+            }
         }
 
         /// <inheritdoc />

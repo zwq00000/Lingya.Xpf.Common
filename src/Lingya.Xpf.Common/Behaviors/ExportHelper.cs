@@ -11,6 +11,9 @@ namespace Lingya.Xpf.Behaviors {
 
         public static void Export(this IPrintableControl printable, string fileName) {
 
+            if (fileName == null) {
+                fileName = "未命名";
+            }
             fileName = fileName.Replace('<', '[').Replace('>', ']');
 
             var dialog = new SaveFileDialog() {

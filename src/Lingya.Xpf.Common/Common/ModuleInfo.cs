@@ -1,99 +1,112 @@
 using System;
-using System.Windows.Controls;
-using DevExpress.Mvvm;
-using DevExpress.Utils;
-using DevExpress.Utils.Design;
-using DevExpress.Xpf.Core;
-using DevExpress.Xpf.Core.Native;
-using DevExpress.Xpf.Docking;
-using DevExpress.Xpf.Docking.Native;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Markup;
+using System.Windows.Media;
 
 namespace Lingya.Xpf.Common {
 
-    public class ModuleInfo<TView> : ModuleInfo where TView : Control {
+    public class ModuleInfoRegister {
 
-        public ModuleInfo(ISupportServices parent, string title) : base(typeof(TView).Name, parent, title) {
+        private static readonly IDictionary<string,ModuleInfo> ModuleInfos = new ConcurrentDictionary<string, ModuleInfo>();
 
+        public static bool Register(ModuleInfo module) {
+            if (module == null) {
+                throw new ArgumentNullException(nameof(module));
+            }
+
+            if (!ModuleInfos.ContainsKey(module.DocumentType)) {
+                ModuleInfos.Add(module.DocumentType, module);
+                return true;
+            }
+
+            return false;
         }
 
-        #region Overrides of ModuleInfo
-
-        /// <inheritdoc />
-        public override void Show(object parameter = null) {
-            var service = Parent.ServiceContainer.GetRequiredService<IDocumentManagerService>();
-            if (service == null) {
-                throw new NullReferenceException("not found IDocumentManagerService");
+        public static ModuleInfo FindModuleInfo(string documentType) {
+            if (ModuleInfos.TryGetValue(documentType, out var module)) {
+                return module;
             }
-            var id = parameter == null ? DocumentType : $"{DocumentType}_{parameter}";
-            var doc = service.FindDocumentByIdOrCreate(id, s => s.CreateDocument(DocumentType, parameter, Parent));
-            doc.DestroyOnClose = true;
-            SetCaptionImage(doc);
-            var docContent = doc.Content as DocumentViewModelBase;
-            if (docContent != null) {
-                docContent.Title = Title;
-            }
-            doc.Show();
+            return null;
         }
 
-        #endregion
+        public static ModuleInfo FindModuleInfo(Type viewType) {
+            var documentType = viewType.Name;
+            if (ModuleInfos.TryGetValue(documentType, out var module)) {
+                return module;
+            }
+            return null;
+        }
+
+        public static ModuleInfo FindModuleInfo(object key) {
+            if (key is ModuleInfo info) {
+                return info;
+            }
+            if (key is string s) {
+                return FindModuleInfo(s);
+            }
+
+            if (key is Type type) {
+                return FindModuleInfo(type);
+            }
+
+            return null;
+        }
     }
 
-    public abstract class ModuleInfo {
-        protected readonly ISupportServices Parent;
-        protected static readonly Uri DefaultIconUri = DXImageHelper.GetImageUri("New", ImageSize.Size16x16);
+    public class ModuleInfo {
+        /// <summary>
+        /// 视图类型
+        /// </summary>
+        private Type _viewType;
 
-        private ModuleInfo() {
-            ShowCommand = new DelegateCommand<object>(Show);
+        public ModuleInfo() {
         }
 
-        public ModuleInfo(string documentType, ISupportServices parent, string title) : this() {
+        public ModuleInfo(string documentType, string title) : this() {
             DocumentType = documentType;
-            Parent = parent;
             Title = title;
+            ModuleInfoRegister.Register(this);
+        }
+
+        public ModuleInfo(Type viewType, string title) : this() {
+            ViewType = viewType;
+            Title = title;
+            ModuleInfoRegister.Register(this);
         }
 
         /// <summary>
         /// View 类型名称
         /// </summary>
-        public string DocumentType { get; private set; }
+        public string DocumentType { get;  set; }
+
         /// <summary>
-        /// 是否选中
+        /// 视图类型
         /// </summary>
-        public virtual bool IsSelected { get; set; }
+        /// <summary>获取或设置此 <see cref="T:System.Windows.DataTemplate" /> 所针对的类型。</summary>
+        /// <returns>默认值为 null。</returns>
+        [DefaultValue(null)]
+        [Ambient]
+        public Type ViewType {
+            get => _viewType;
+            set {
+                _viewType = value;
+                if (value != null) {
+                    DocumentType = value.Name;
+                }
+            }
+        }
+
+        public Type ViewModelType { get; set; }
 
         /// <summary>
         /// 标题
         /// </summary>
-        public string Title { get; private set; }
+        public string Title { get; set; }
 
-        /// <summary>
-        /// Model 图标 Uri
-        /// </summary>
-        public virtual Uri Icon { get; set; } = DefaultIconUri;
 
-        internal ModuleInfo SetIcon(string icon) {
-            Icon = AssemblyHelper.GetResourceUri(typeof(ModuleInfo).Assembly, $"Images/{icon}.png");
-            return this;
-        }
+        public ImageSource Icon { get; set; }
 
-        /// <summary>
-        /// 显示/打开 模块
-        /// </summary>
-        /// <param name="parameter"></param>
-        public abstract void Show(object parameter = null);
-
-        public ICommand<object> ShowCommand { get; }
-
-        protected void SetCaptionImage(IDocument doc) {
-            var document = doc as DockingDocumentUIServiceBase<DocumentPanel, DocumentGroup>.Document;
-            if (document != null) {
-                if (Icon == null) {
-                    Icon = DefaultIconUri;
-                }
-                var image = ImageSourceHelper.GetImageSource(Icon);
-                document.DocumentPanel.CaptionImage = image;
-                document.DocumentPanel.ShowCaptionImage = true;
-            }
-        }
     }
 }

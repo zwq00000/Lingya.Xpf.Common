@@ -12,7 +12,6 @@ namespace Lingya.Xpf.Common {
         }
 
         object IViewLocator.ResolveView(string name) {
-            //return (object)this.GetValueOrDefault<string, DataTemplate>(name).With<DataTemplate, DependencyObject>((Func<DataTemplate, DependencyObject>)(x => x.LoadContent()));
             ResourceDictionary res = Resource;
             if (res == null) {
                 res = Application.Current.Resources;

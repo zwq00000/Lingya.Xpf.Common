@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>zwq00000@gmail.com</authors>
+    <owners>Lingya Tech</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <description>Lingya.Xpf.Common.NuGet</description>
+    <summary>Wpf Common lib</summary>
+    <tags>devexpress,xpf</tags>
+    <releaseNotes>a Simple Wpf Libs.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+  </metadata>
+</package>

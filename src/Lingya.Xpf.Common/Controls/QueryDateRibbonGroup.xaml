@@ -1,0 +1,40 @@
+﻿<dxr:RibbonPageGroup x:Class="Lingya.Xpf.Controls.QueryDateRibbonGroup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                     xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                     xmlns:common="clr-namespace:Lingya.Xpf.Common"
+                     mc:Ignorable="d" 
+                     d:DataContext="{d:DesignInstance {x:Type common:QueryDateController}}"
+                     Caption="数据查询">
+    <dxb:BarSubItem Content="加载数据" Glyph="{dx:DXImage Image=Refresh2_16x16.png}" LargeGlyph="{dx:DXImage Image=Refresh2_32x32.png}">
+        <dxb:BarButtonItem Content="加载今天" Command="{Binding LoadToday}"/>
+        <dxb:BarButtonItem Content="加载本周" Command="{Binding LoadThisWeek}"/>
+        <dxb:BarButtonItem Content="加载本月" Command="{Binding LoadThisMonth}"/>
+        <dxb:BarItemSeparator/>
+        <dxb:BarButtonItem Content="最近 7 天" Command="{Binding LoadLastDays}" CommandParameter="7"/>
+        <dxb:BarButtonItem Content="最近 30 天" Command="{Binding LoadLastDays}" CommandParameter="30"/>
+    </dxb:BarSubItem>
+    <dxb:BarItemSeparator/>
+    <dxb:BarEditItem Content="开始日期" EditValue="{Binding QueryDate.Start}">
+        <dxb:BarEditItem.EditSettings >
+            <dxe:DateEditSettings  />
+        </dxb:BarEditItem.EditSettings>
+    </dxb:BarEditItem>
+    <dxb:BarEditItem Content="结束日期" EditValue="{Binding QueryDate.End}">
+        <dxb:BarEditItem.EditSettings >
+            <dxe:DateEditSettings  />
+        </dxb:BarEditItem.EditSettings>
+    </dxb:BarEditItem>
+    <dxb:BarEditItem Content="天数" EditValue="{Binding QueryDate.DuringDays}" IsReadOnly="True">
+        <dxb:BarEditItem.EditSettings>
+            <dxe:TextEditSettings/>
+        </dxb:BarEditItem.EditSettings>
+    </dxb:BarEditItem>
+    <dxb:BarButtonItem Content="加载数据" Glyph="{dx:DXImage Image=Refresh_16x16.png}" Command="{Binding LoadData}" />
+</dxr:RibbonPageGroup>
+    

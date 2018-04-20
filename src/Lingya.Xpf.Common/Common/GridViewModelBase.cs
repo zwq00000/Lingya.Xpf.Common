@@ -1,32 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Autofac;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Xpf.Core;
+using JetBrains.Annotations;
+using Lingya.Xpf.Extensions;
 using RedRiver.Data.Repos;
 
 namespace Lingya.Xpf.Common {
-    public abstract class GridViewModelBase<TEntity> : DocumentViewModelBase, IDisposable where TEntity : class {
+    public abstract class GridViewModelBase<TEntity> : DocumentViewModelBase where TEntity : class {
 
         static readonly Expression<Func<TEntity, bool>> AllAllowFilter = t => true;
         private Expression<Func<TEntity, bool>> _queryFilter = AllAllowFilter;
+        private TEntity _selectedEntity;
 
-        protected GridViewModelBase(IRepositoryLocal<TEntity> repository) {
+        protected GridViewModelBase() {
+            if (!ViewModelBase.IsInDesignMode) {
+                Repository = Scope.Resolve<IRepositoryLocal<TEntity>>();
+                Entities = Repository.Local;
+                if (Repository is INotifyPropertyChanged propertyChanged) {
+                    propertyChanged.PropertyChanged += (s, e) => { DetactChanges(); };
+                }
+            }
+        }
+
+
+        protected GridViewModelBase([NotNull] ILifetimeScope scope, [NotNull]IRepositoryLocal<TEntity> repository):base(scope) {
             Repository = repository;
             Entities = Repository.Local;
-            var notify = Repository as INotifyPropertyChanged;
-            if (notify != null) {
-                notify.PropertyChanged += (s, e) => {
+            if (Repository is INotifyPropertyChanged propertyChanged) {
+                propertyChanged.PropertyChanged += (s, e) => {
                     DetactChanges();
                 };
             }
         }
 
-        protected Expression<Func<TEntity, bool>> QueryFilter {
+        public Expression<Func<TEntity, bool>> QueryFilter {
             get { return _queryFilter; }
             set {
                 if (value == null) {
@@ -39,6 +51,9 @@ namespace Lingya.Xpf.Common {
 
         protected IRepositoryLocal<TEntity> Repository { get; }
 
+        /// <summary>
+        /// 数据实体集合
+        /// </summary>
         public virtual ICollection<TEntity> Entities {
             get;
         }
@@ -46,109 +61,121 @@ namespace Lingya.Xpf.Common {
         /// <summary>
         /// 当前选中的项
         /// </summary>
-        public TEntity SelectedEntity { get; set; }
+        public TEntity SelectedEntity {
+            get => _selectedEntity;
+            set {
+                if (Equals(value, _selectedEntity)) return;
+                _selectedEntity = value;
+                OnPropertyChanged();
+            }
+        }
 
         #region  Commands
 
         [AsyncCommand(Name = "LoadCommand")]
-        public virtual async void Load() {
-            await LoadCoreAsync();
+        public virtual async void LoadData() {
+            using (this.BeginLoadingScope()) {
+                await LoadDataCore();
+            }
         }
 
         [Command(Name = "SaveCommand")]
         public async Task Save() {
-            IsLoading = true;
-            try {
+            using (this.BeginLoadingScope()) {
                 await Task.Run(() => {
                     Repository.SaveChanges();
                     DetactChanges();
                 });
-            } finally {
-                IsLoading = false;
             }
         }
 
+        /// <summary>
+        /// 新建对象
+        /// </summary>
         [Command(Name = "NewCommand")]
-        public void AddNew() {
+        public virtual void New() {
             var instance = Repository.Create();
             Repository.Local.Add(instance);
         }
 
+        /// <summary>
+        /// 刷新对象
+        /// </summary>
+        /// <returns></returns>
         [Command(Name = "RefreshCommand")]
-        public async Task Refresh() {
-            await LoadCoreAsync();
+        public virtual async Task Refresh() {
+            using (this.BeginLoadingScope()) {
+                await LoadDataCore();
+            }
         }
 
         /// <summary>
         /// 删除当前记录
         /// </summary>
         [Command(Name = "DeleteCommand")]
-        public void Delete(int row) {
-            if (SelectedEntity != null) {
-                var result = ShowQuestion("是否删除当前记录?");
+        public void Delete(TEntity entity) {
+            if (entity != null) {
+                var result = this.ShowQuestion("是否删除当前记录?");
                 if (result == MessageResult.Yes) {
-                    Repository.Local.Remove(SelectedEntity);
-                    Repository.SaveChanges();
-                    DetactChanges();
+                    using (this.BeginLoadingScope()) {
+                        try {
+                            Entities.Remove(entity);
+                            Repository.SaveChanges();
+                            DetactChanges();
+                        } catch (InvalidOperationException) {
+                            Repository.SaveChanges();
+                            DetactChanges();
+                        }
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// 是否允许删除对象
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual bool CanDelete(TEntity entity) {
+            return entity!=null;
         }
 
         /// <summary>
         /// 重置当前记录
         /// </summary>
         [Command(Name = "ResetCommand")]
-        public void Reset() {
-            Repository.Reload(SelectedEntity);
-            DetactChanges();
+        public async Task Reset(TEntity entity) {
+            if (entity != null) {
+                await Repository.ReloadAsync(entity);
+                DetactChanges();
+            }
         }
 
         public override void OnClose(CancelEventArgs e) {
             CheckNotSavedChanges(e);
         }
 
-        public override void OnDestroy() {
-            base.OnDestroy();
-            Dispose();
-        }
-
         #endregion
 
-        /// <summary>
-        /// 显示问题提示对话框
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="button"></param>
-        /// <returns></returns>
-        protected MessageResult ShowQuestion(string message, MessageButton button = MessageButton.YesNo) {
-            return MessageBoxService.ShowMessage(message, "提示信息", button,
-                MessageIcon.Question);
-        }
 
-        protected virtual void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) { }
 
         /// <summary>
         /// 加载数据
         /// </summary>
         /// <returns></returns>
-        protected override async Task LoadCoreAsync() {
+        protected override async Task LoadDataCore() {
             CancelEventArgs args = new CancelEventArgs();
             CheckNotSavedChanges(args);
             if (args.Cancel) {
                 return;
             }
-            try {
-                IsLoading = true;
-                await Repository.LoadAsync(QueryFilter);
-                DetactChanges();
-            } finally {
-                IsLoading = false;
-            }
+            await Repository.LoadAsync(QueryFilter);
+            DetactChanges();
         }
 
         private void CheckNotSavedChanges(CancelEventArgs args) {
             if (Repository.HasChanges()) {
-                var result = ShowQuestion("当前更改没有保存,是否保存 ?", MessageButton.YesNoCancel);
+                var result = this.ShowQuestion("当前更改没有保存,是否保存 ?", MessageButton.YesNoCancel);
                 switch (result) {
                     case MessageResult.Yes:
                         Repository.SaveChanges();
@@ -162,51 +189,9 @@ namespace Lingya.Xpf.Common {
             }
         }
 
-        protected virtual void OnSelectedEntityChanged(TEntity oldValue) {
-            SelectedEntityChanged?.Invoke(this, new ValueChangedEventArgs<TEntity>(oldValue, SelectedEntity));
-        }
-
         private void DetactChanges() {
             HasChanges = Repository.HasChanges();
         }
-
-        public event EventHandler<ValueChangedEventArgs<TEntity>> SelectedEntityChanged;
-
-        /*
-        public virtual string CheckedItemType { get; set; }
-
-        protected GridModuleNavigationParameter NavigationParameter { get; private set; }
-
-        protected virtual void OnNavigatedFrom() { }
-
-        protected virtual void OnNavigatedTo() {
-            if (NavigationParameter == GridModuleNavigationParameter.NewItem)
-                Dispatcher.CurrentDispatcher.BeginInvoke(new Action(ShowNewItemWindow));
-        }
-
-        public abstract void ShowNewItemWindow();
-
-        #region ISupportNavigation
-
-        void ISupportNavigation.OnNavigatedFrom() { OnNavigatedFrom(); }
-        void ISupportNavigation.OnNavigatedTo() { OnNavigatedTo(); }
-
-        object ISupportParameter.Parameter {
-            get { return NavigationParameter; }
-            set { NavigationParameter = value == null ? GridModuleNavigationParameter.Default : (GridModuleNavigationParameter)value; }
-        }
-        #endregion
-        */
-
-        #region IDisposable
-
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public virtual void Dispose() {
-            var disposable = (IDisposable)Repository;
-            disposable?.Dispose();
-        }
-
-        #endregion
     }
 
     public enum GridModuleNavigationParameter { Default, NewItem }

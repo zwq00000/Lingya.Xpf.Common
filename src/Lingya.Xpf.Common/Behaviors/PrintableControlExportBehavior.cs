@@ -6,6 +6,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.UI.Interactivity;
 using DevExpress.Mvvm.UI.Native;
+using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Printing;
 
 namespace Lingya.Xpf.Behaviors {

@@ -1,0 +1,12 @@
+﻿<dxr:RibbonPageGroup x:Class="Lingya.Xpf.Controls.OrderOperateRibbonGroup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                     xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+                     xmlns:localization="clr-namespace:Lingya.Xpf.Localization"
+                     Caption="{x:Static localization:ViewResources.RibbonPageGroup_Audit}">
+    <dxb:BarButtonItem x:Name="AuditButton" Style="{DynamicResource OrderView.Command.Audit}" />
+    <dxb:BarButtonItem x:Name="CancelAuditButton" Style="{DynamicResource OrderView.Command.CancelAudit}" />
+    <dxb:BarButtonItem x:Name="AuditAllButton" Style="{DynamicResource OrderView.Command.AuditAll}" />
+
+</dxr:RibbonPageGroup>

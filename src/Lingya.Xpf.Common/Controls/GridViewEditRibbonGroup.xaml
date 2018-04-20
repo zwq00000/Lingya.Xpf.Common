@@ -1,0 +1,17 @@
+﻿<dxr:RibbonPageGroup x:Class="Lingya.Xpf.Controls.GridViewEditRibbonGroup"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+                     xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+                     xmlns:localization="clr-namespace:Lingya.Xpf.Localization"
+                     Caption="{x:Static localization:ViewResources.RibbonPageGroup_Edit}">
+    <dxb:BarButtonItem x:Name="AddNewButton" Style="{DynamicResource CollectionView.Command.New}" />
+    <dxb:BarButtonItem x:Name="SaveButton"  Style="{DynamicResource CollectionView.Command.Save}" />
+    <dxb:BarButtonItem x:Name="EditButton"  Style="{DynamicResource CollectionView.Command.Edit}" />
+    <dxb:BarItemSeparator/>
+    <dxb:BarButtonItem x:Name="DeleteButton" Style="{DynamicResource CollectionView.Command.Delete}"/>
+    <dxb:BarItemSeparator/>
+    <dxb:BarButtonItem x:Name="RefreshButton" Style="{DynamicResource CollectionView.Command.Refresh}" />
+    <dxb:BarButtonItem x:Name="ExportButton" Content="导出" Style="{DynamicResource CollectionView.Command.Export}"
+                       ItemClick="BarItem_OnItemClick" />
+</dxr:RibbonPageGroup>
