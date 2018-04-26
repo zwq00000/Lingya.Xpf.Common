@@ -47,12 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -101,7 +96,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Services\ContainerService.cs" />
-    <Compile Include="Services\UserContextService.cs" />
     <EmbeddedResource Include="Localization\ViewResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ViewResources1.Designer.cs</LastGenOutput>
@@ -122,16 +116,7 @@
     <PackageReference Include="Unofficial.DevExpress.Mvvm">
       <Version>17.1.7</Version>
     </PackageReference>
-    <PackageReference Include="Unofficial.DevExpress.Mvvm.ViewModel">
-      <Version>17.1.7</Version>
-    </PackageReference>
-    <PackageReference Include="Unofficial.DevExpress.Xpf.Core">
-      <Version>17.1.7</Version>
-    </PackageReference>
     <PackageReference Include="Unofficial.DevExpress.Xpf.Docking">
-      <Version>17.1.7</Version>
-    </PackageReference>
-    <PackageReference Include="Unofficial.DevExpress.Xpf.Layout.Core">
       <Version>17.1.7</Version>
     </PackageReference>
     <PackageReference Include="Unofficial.DevExpress.Xpf.LayoutControl">

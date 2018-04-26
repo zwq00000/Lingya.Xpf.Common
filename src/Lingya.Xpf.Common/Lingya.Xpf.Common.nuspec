@@ -18,10 +18,7 @@
       <dependency id="JetBrains.Annotations" version="11.1.0"/>
       <dependency id="RedRiver.Data.Repos" version="1.0.5"/>
       <dependency id="Unofficial.DevExpress.Mvvm" version="17.1.7"/>
-      <dependency id="Unofficial.DevExpress.Mvvm.ViewModel" version="17.1.7"/>
-      <dependency id="Unofficial.DevExpress.Xpf.Core" version="17.1.7"/>
       <dependency id="Unofficial.DevExpress.Xpf.Docking" version="17.1.7"/>
-      <dependency id="Unofficial.DevExpress.Xpf.Layout.Core" version="17.1.7"/>
       <dependency id="Unofficial.DevExpress.Xpf.LayoutControl" version="17.1.7"/>
       <dependency id="Unofficial.DevExpress.Xpf.Printing" version="17.1.7"/>
     </dependencies>

@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lingya.Xpf.Common", "src\Lingya.Xpf.Common\Lingya.Xpf.Common.csproj", "{1365BF20-F3E5-432C-89F8-2C2CAF7DCC5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xpf.Runtime.App", "src\ASCP.Core.Runtime\Xpf.Runtime.App.csproj", "{1432ACBE-533B-4E57-95F2-5ADF25F6E918}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Xpf.Runtime", "Xpf.Runtime\ASCP.Runtime.vdproj", "{7C5D6C18-88F9-4372-8630-2F808FC02CC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{1365BF20-F3E5-432C-89F8-2C2CAF7DCC5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1365BF20-F3E5-432C-89F8-2C2CAF7DCC5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1365BF20-F3E5-432C-89F8-2C2CAF7DCC5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1432ACBE-533B-4E57-95F2-5ADF25F6E918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1432ACBE-533B-4E57-95F2-5ADF25F6E918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1432ACBE-533B-4E57-95F2-5ADF25F6E918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1432ACBE-533B-4E57-95F2-5ADF25F6E918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C5D6C18-88F9-4372-8630-2F808FC02CC5}.Debug|Any CPU.ActiveCfg = Debug
+		{7C5D6C18-88F9-4372-8630-2F808FC02CC5}.Debug|Any CPU.Build.0 = Debug
+		{7C5D6C18-88F9-4372-8630-2F808FC02CC5}.Release|Any CPU.ActiveCfg = Release
+		{7C5D6C18-88F9-4372-8630-2F808FC02CC5}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

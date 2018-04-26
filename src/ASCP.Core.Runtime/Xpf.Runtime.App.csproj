@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1432ACBE-533B-4E57-95F2-5ADF25F6E918}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ASCP.Core.Runtime</RootNamespace>
+    <AssemblyName>ASCP.Core.Runtime</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Unofficial.DevExpress.Images">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.Charts">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.Docking">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.Grid">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.LayoutControl">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.NavBar">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.ReportDesigner">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.Ribbon">
+      <Version>17.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Unofficial.DevExpress.Xpf.Themes.Office2016White">
+      <Version>17.1.7</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

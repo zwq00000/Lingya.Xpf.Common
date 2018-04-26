@@ -195,7 +195,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="EntityView.LayoutControl" TargetType="dxlc:LayoutControl">
+    
+   <Style x:Key="EntityView.LayoutControl" TargetType="dxlc:LayoutControl">
         <Setter Property="Orientation" Value="Vertical" />
         <Setter Property="IsEnabled" Value="{Binding Entity, Converter={dxmvvm:ObjectToBooleanConverter}}" />
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
@@ -209,6 +210,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style x:Key="EntityView.LookUpEdit" TargetType="dxg:LookUpEdit">
         <Setter Property="AllowUpdateTwoWayBoundPropertiesOnSynchronization" Value="False" />
         <Setter Property="IsTextEditable" Value="False" />
