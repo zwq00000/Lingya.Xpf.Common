@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>zwq00000@gmail.com</authors>
+    <owners>Lingya Tech</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <description>Lingya.Xpf.Common.NuGet</description>
+    <summary>Wpf Common lib</summary>
+    <tags>devexpress,xpf</tags>
+    <releaseNotes>a Simple Wpf Libs.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <dependencies>
+      <dependency id="Microsoft.Bcl" version="1.1.10" />
+      <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+      <dependency id="Microsoft.Bcl.Build" version="1.0.21"/>
+      <dependency id="Autofac" version="3.5.2"/>
+      <dependency id="JetBrains.Annotations" version="11.1.0"/>
+      <dependency id="RedRiver.Data.Repos" version="1.0.5"/>
+      <dependency id="Unofficial.DevExpress.Mvvm" version="17.1.7"/>
+      <dependency id="Unofficial.DevExpress.Xpf.Docking" version="17.1.7"/>
+      <dependency id="Unofficial.DevExpress.Xpf.LayoutControl" version="17.1.7"/>
+      <dependency id="Unofficial.DevExpress.Xpf.Printing" version="17.1.7"/>
+    </dependencies>
+  </metadata>
+</package>

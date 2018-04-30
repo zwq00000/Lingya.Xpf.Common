@@ -93,7 +93,12 @@ namespace Lingya.Xpf.Common {
         /// <see cref="ISupportParameter.Parameter"/>
         /// </summary>
         protected virtual async Task ProcessParameter() {
+#if NET40
+            await Task.Factory.StartNew(() => { });
+#else
             await Task.Yield();
+#endif
+
         }
 
         /// <summary>
@@ -114,6 +119,7 @@ namespace Lingya.Xpf.Common {
             if (!_isInitialized) {
                 //第一次加载执行初始化事件
                 await OnInitialized();
+                
                 _isInitialized = true;
             }
         }
@@ -129,11 +135,18 @@ namespace Lingya.Xpf.Common {
         #region Implements INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
-
+#if NET40
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName = null) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+#else
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+#endif
+
 
         public void RaisePropertyChanged(string propertyName) {
             OnPropertyChanged(propertyName);

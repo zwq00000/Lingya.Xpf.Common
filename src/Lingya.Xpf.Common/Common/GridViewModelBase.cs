@@ -82,10 +82,18 @@ namespace Lingya.Xpf.Common {
         [Command(Name = "SaveCommand")]
         public async Task Save() {
             using (this.BeginLoadingScope()) {
+#if NET40
+                await Task.Factory.StartNew(() => {
+                    Repository.SaveChanges();
+                    DetactChanges();
+                });
+#else
                 await Task.Run(() => {
                     Repository.SaveChanges();
                     DetactChanges();
                 });
+#endif
+
             }
         }
 

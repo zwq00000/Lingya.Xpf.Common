@@ -7,6 +7,12 @@ Set suffix=build%YYYYmmdd%
 Set version-suffix=-Suffix %suffix%
 
 cd ..\src\Lingya.Xpf.Common
-Nuget pack -Build -Properties Configuration=Release -OutputDirectory %OutPath% %version-suffix%
+REM Nuget pack -Build -Properties Configuration=Release -OutputDirectory %OutPath% %version-suffix%
+Nuget restore Lingya.Xpf.Common.csproj -Force
+Nuget pack Lingya.Xpf.Common.csproj -Build -Properties Configuration=Release -OutputDirectory %OutPath% %version-suffix%
+
+Nuget restore Lingya.Xpf.Common.net40.csproj -Force
+Nuget pack Lingya.Xpf.Common.net40.csproj -Build -Properties Configuration=Release -OutputDirectory %OutPath% %version-suffix%
+
 cd ../../tools
 
