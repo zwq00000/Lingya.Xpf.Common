@@ -88,28 +88,22 @@ namespace Lingya.Xpf.Common {
         #region Commands
 
         /// <summary>
-        /// 在 初始化之前，处理视图模型参数，
+        /// 在 <see cref="OnInitialized">初始化</see>之前，处理视图模型参数，
         /// 此方法在加载数据 <see cref="LoadDataCore"/> 之前
         /// <see cref="ISupportParameter.Parameter"/>
         /// </summary>
-        protected virtual async Task ProcessParameter() {
-#if NET40
-            await Task.Factory.StartNew(() => { });
-#else
-            await Task.Yield();
-#endif
-
+        /// /// <remarks><see cref="Parameter"/> Can be Null</remarks>
+        protected virtual void ProcessParameter() {
         }
 
         /// <summary>
-        /// 当初始化完成时,响应此方法，自动加载数据
+        /// 当初始化完成时,响应此方法，
+        /// 按顺序调用 <see cref="ProcessParameter"/>和<see cref="LoadDataCore"/> 方法
         /// </summary>
         /// <returns></returns>
-        protected async Task OnInitialized() {
+        protected virtual async Task OnInitialized() {
             using (this.BeginLoadingScope()) {
-                if (Parameter != null) {
-                    await ProcessParameter();
-                }
+                ProcessParameter();
                 await LoadDataCore();
             }
         }

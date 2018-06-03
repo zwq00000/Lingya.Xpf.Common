@@ -8,6 +8,10 @@ namespace Lingya.Xpf.Common {
     /// 数据查询日期参数
     /// </summary>
     public class DateRange : INotifyPropertyChanged {
+        /// <summary>
+        /// 一天
+        /// </summary>
+        private static readonly TimeSpan OneDay = TimeSpan.FromDays(1).Subtract(new TimeSpan(1));
         private int _duringDays;
         private DateTime _start;
         private DateTime _end;
@@ -23,7 +27,7 @@ namespace Lingya.Xpf.Common {
             get { return _start; }
             set {
                 if (value.Equals(_start)) return;
-                _start = value;
+                _start = value.Date;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(DuringDays));
                 this._description = $"{Start:d} - {End:d}";
@@ -37,7 +41,10 @@ namespace Lingya.Xpf.Common {
             get { return _end; }
             set {
                 if (value.Equals(_end)) return;
-                _end = value;
+                _end = value.Date.Add(OneDay);
+                if (_end < _start) {
+                    Start = _end;
+                }
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(DuringDays));
                 this._description = $"{Start:d} - {End:d}";

@@ -170,7 +170,7 @@
         <Setter Property="CurrentItem" Value="{Binding SelectedEntity}" />
         <Setter Property="ShowLoadingPanel" Value="{Binding IsLoading}" />
         <Setter Property="ShowBorder" Value="False" />
-        <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+        <!--<Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
                     <ItemsControl>
@@ -178,7 +178,7 @@
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>
-        </Setter>
+        </Setter>-->
     </Style>
     <Style x:Key="CollectionView.GridControl.Editable" BasedOn="{StaticResource CollectionView.GridControl.Base}"
            TargetType="dxg:GridControl">

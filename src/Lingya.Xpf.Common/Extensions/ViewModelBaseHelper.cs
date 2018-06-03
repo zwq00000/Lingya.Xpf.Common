@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using Autofac;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Core;
 using Lingya.Xpf.Core;
 using RedRiver.Data.Repos;
 
@@ -34,23 +35,24 @@ namespace Lingya.Xpf.Extensions {
         /// <summary>
         /// 显示问题提示对话框
         /// </summary>
+        /// <param name="owner"></param>
         /// <param name="message"></param>
         /// <param name="button"></param>
         /// <returns></returns>
-        public static MessageResult ShowQuestion(this IDocumentContent viewModel, string message, MessageButton button = MessageButton.YesNo) {
-            return ShowMessageInternal(viewModel, message, button, MessageIcon.Question);
+        public static MessageResult ShowQuestion(this IDocumentContent owner, string message, MessageButton button = MessageButton.YesNo) {
+            return ShowMessageInternal(owner, message, button, MessageIcon.Question);
         }
 
-        public static MessageResult ShowMessage(this IDocumentContent viewModel, string message, MessageButton button = MessageButton.OK) {
-            return viewModel.ShowMessageInternal(message, button, MessageIcon.Information);
+        public static MessageResult ShowMessage(this IDocumentContent owner, string message, MessageButton button = MessageButton.OK) {
+            return owner.ShowMessageInternal(message, button, MessageIcon.Information);
         }
 
-        public static MessageResult ShowWarnning(this IDocumentContent viewModel, string message, MessageButton button = MessageButton.OK) {
-            return viewModel.ShowMessageInternal(message, button, MessageIcon.Warning);
+        public static MessageResult ShowWarnning(this IDocumentContent owner, string message, MessageButton button = MessageButton.OK) {
+            return owner.ShowMessageInternal(message, button, MessageIcon.Warning);
         }
 
-        public static MessageResult ShowMessageInternal(this IDocumentContent viewModel, string message, MessageButton button = MessageButton.OK, MessageIcon icon = MessageIcon.Information) {
-            var service = viewModel.GetService<IMessageBoxService>();
+        public static MessageResult ShowMessageInternal(this IDocumentContent owner, string message, MessageButton button = MessageButton.OK, MessageIcon icon = MessageIcon.Information) {
+            var service = owner.GetService<IMessageBoxService>();
             if (service != null) {
                 return service.ShowMessage(message, "提示信息", button, MessageIcon.Information);
             } else {
@@ -125,6 +127,30 @@ namespace Lingya.Xpf.Extensions {
             var docId = documentType;
             var service = owner.GetService<IDocumentManagerService>();
             return service.FindDocumentByIdOrCreate(docId, s => s.CreateDocument(documentType, parameter, owner));
+        }
+
+        public static void ShowDialog<TView>(this IDocumentContent owner,string title) where TView:UserControl {
+            var documentType = typeof(TView).Name;
+            owner.GetService<IDialogService>().ShowDialog(new UICommand[0], title, documentType, null, null, owner);
+        }
+
+        public static void ShowDialog<TView>(this IDocumentContent owner, string title,object parameter) where TView : UserControl {
+            var documentType = typeof(TView).Name;
+            owner.GetService<IDialogService>().ShowDialog(new UICommand[0], title, documentType, null,parameter, owner);
+        }
+
+        public static void ShowDialog<TView>(this IDocumentContent owner, string title,object viewModel, object parameter) where TView : UserControl {
+            var documentType = typeof(TView).Name;
+            owner.GetService<IDialogService>().ShowDialog(new UICommand[0], title, documentType,viewModel, parameter, owner);
+        }
+
+        private static IDialogService GetDialogService(this IDocumentContent owner) {
+            var service = owner.GetRequiredService<IDialogService>();
+            if (service == null) {
+                service = new DialogService();
+            }
+
+            return service;
         }
     }
 }

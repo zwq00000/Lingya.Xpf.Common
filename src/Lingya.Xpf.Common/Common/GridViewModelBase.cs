@@ -21,7 +21,7 @@ namespace Lingya.Xpf.Common {
             if (!ViewModelBase.IsInDesignMode) {
                 Repository = Scope.Resolve<IRepositoryLocal<TEntity>>();
                 Entities = Repository.Local;
-                if (Repository is INotifyPropertyChanged propertyChanged) {
+                if (Repository.Local is INotifyPropertyChanged propertyChanged) {
                     propertyChanged.PropertyChanged += (s, e) => { DetactChanges(); };
                 }
             }
@@ -31,7 +31,7 @@ namespace Lingya.Xpf.Common {
         protected GridViewModelBase([NotNull] ILifetimeScope scope, [NotNull]IRepositoryLocal<TEntity> repository):base(scope) {
             Repository = repository;
             Entities = Repository.Local;
-            if (Repository is INotifyPropertyChanged propertyChanged) {
+            if (Repository.Local is INotifyPropertyChanged propertyChanged) {
                 propertyChanged.PropertyChanged += (s, e) => {
                     DetactChanges();
                 };
